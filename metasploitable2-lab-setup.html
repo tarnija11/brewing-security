@@ -122,9 +122,9 @@
   <div class="page-container">
 
     <div class="header">
-      <div class="header-label">Brewing Security — Lab Guide</div>
+      <div class="header-label">Brewing Security Lab Guide</div>
       <h1>Metasploitable 2: Lab Setup</h1>
-      <p>Everything you need to set up your hacking lab before watching the videos. Follow these steps once — then you're ready for the entire series.</p>
+      <p>Everything you need to set up your hacking lab before watching the videos. Follow these steps once, then you're ready for the entire series.</p>
     </div>
 
     <!-- ===== CHOOSER ===== -->
@@ -221,14 +221,7 @@
           </div>
           <div class="visual-box">
             How your network should look
-            <div class="diagram">
-Your Computer (Host)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-&nbsp;&nbsp;&nbsp;&nbsp;├── vboxnet0 (192.168.56.0/24)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Kali &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 192.168.56.x<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Metasploitable → 192.168.56.x<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-&nbsp;&nbsp;&nbsp;&nbsp;└── Internet (Kali only, if Adapter 2 = NAT)
+            <img src="assets/single-pc.png" alt="">
             </div>
           </div>
         </div>
@@ -248,18 +241,7 @@ Your Computer (Host)<br>
           </div>
           <div class="visual-box">
             How bridged networking looks across two machines
-            <div class="diagram">
-Your Router / WiFi (192.168.1.0/24)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-&nbsp;&nbsp;&nbsp;&nbsp;├── Mac (Machine A) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 192.168.1.10<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Kali VM &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 192.168.1.25 (bridged)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-&nbsp;&nbsp;&nbsp;&nbsp;├── Windows PC (Machine B) → 192.168.1.15<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Metasploitable &nbsp;→ 192.168.1.20 (bridged)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-&nbsp;&nbsp;&nbsp;&nbsp;├── Your Phone &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 192.168.1.30<br>
-&nbsp;&nbsp;&nbsp;&nbsp;└── ... other devices
-            </div>
+            <img src="assets/two-pc.png" alt="">
           </div>
           <div class="step">
             <div class="step-header"><div class="step-num">3</div><div class="step-title">Make sure both physical machines are on the same network</div></div>
