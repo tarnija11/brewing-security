@@ -93,8 +93,290 @@
     .callout-info { background: rgba(96, 165, 250, 0.06); border: 1px solid var(--accent-blue-dim); color: var(--accent-blue); }
     .callout-success { background: rgba(74, 222, 128, 0.06); border: 1px solid var(--accent-green-dim); color: var(--accent-green); }
     code { font-family: 'JetBrains Mono', monospace; font-size: 0.82em; background: var(--bg-code); padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid var(--border); color: var(--accent-green); }
+
+    /* =============================================
+       NETWORK DIAGRAM STYLES
+       ============================================= */
+    .network-diagram {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem 1.5rem 1.75rem;
+      margin: 1.25rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .network-diagram::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(74, 222, 128, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .diagram-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    /* --- SINGLE PC DIAGRAM --- */
+    .diag-single {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .diag-host-box {
+      width: 100%;
+      max-width: 480px;
+      border: 1.5px dashed #2d4a3e;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem 1.5rem;
+      position: relative;
+      background: rgba(74, 222, 128, 0.015);
+    }
+    .diag-host-label {
+      position: absolute;
+      top: -0.55rem;
+      left: 1rem;
+      background: var(--bg-secondary);
+      padding: 0 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-green);
+    }
+    .diag-vms-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    .diag-vm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .diag-vm-box {
+      width: 120px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .diag-vm-box.kali { border-color: #2d4a3e; }
+    .diag-vm-box.msf  { border-color: #3a1e1e; }
+    .diag-vm-icon {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .diag-vm-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      display: block;
+    }
+    .diag-vm-name.kali { color: var(--accent-green); }
+    .diag-vm-name.msf  { color: var(--accent-red); }
+    .diag-vm-ip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--text-secondary);
+      display: block;
+      margin-top: 0.2rem;
+    }
+    .diag-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0.5rem;
+      gap: 0.2rem;
+    }
+    .diag-connector-line {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .diag-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+      flex-shrink: 0;
+    }
+    .diag-dash-line {
+      width: 48px;
+      height: 1.5px;
+      background: repeating-linear-gradient(
+        to right,
+        var(--accent-green) 0px,
+        var(--accent-green) 5px,
+        transparent 5px,
+        transparent 9px
+      );
+    }
+    .diag-connector-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--accent-green);
+      text-align: center;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .diag-network-badge {
+      margin-top: 1.1rem;
+      display: flex;
+      justify-content: center;
+    }
+    .diag-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      border: 1px solid var(--accent-green-dim);
+      color: var(--accent-green);
+      background: rgba(74, 222, 128, 0.06);
+    }
+    .diag-badge.isolated {
+      border-color: var(--accent-green-dim);
+      color: var(--accent-green);
+    }
+    .diag-badge.bridged {
+      border-color: var(--accent-blue-dim);
+      color: var(--accent-blue);
+      background: rgba(96, 165, 250, 0.06);
+    }
+
+    /* --- DUAL PC DIAGRAM --- */
+    .diag-dual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .diag-machines-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    .diag-machine {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      flex: 0 0 auto;
+    }
+    .diag-physical-box {
+      border: 1.5px dashed #2a3a4a;
+      border-radius: 10px;
+      padding: 1rem 1rem 0.9rem;
+      text-align: center;
+      background: rgba(96, 165, 250, 0.015);
+      position: relative;
+      min-width: 130px;
+    }
+    .diag-physical-label {
+      position: absolute;
+      top: -0.55rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-secondary);
+      padding: 0 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      white-space: nowrap;
+    }
+    .diag-physical-icon {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .diag-physical-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: 0.65rem;
+    }
+    .diag-bridge-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0.5rem;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+    .diag-bridge-line {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .diag-bridge-dash {
+      width: 36px;
+      height: 2px;
+      background: repeating-linear-gradient(
+        to right,
+        var(--accent-blue) 0px,
+        var(--accent-blue) 6px,
+        transparent 6px,
+        transparent 10px
+      );
+    }
+    .diag-router-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+      margin: 0 0.2rem;
+    }
+    .diag-bridge-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.54rem;
+      color: var(--accent-blue);
+      text-align: center;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .diag-legend {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
+    }
+    .diag-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--text-secondary);
+    }
+    .diag-legend-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .diag-legend-dot.attacker { background: var(--accent-green); box-shadow: 0 0 5px var(--accent-green); }
+    .diag-legend-dot.target   { background: var(--accent-red);   box-shadow: 0 0 5px var(--accent-red); }
+    .diag-legend-dot.network  { background: var(--accent-blue);  box-shadow: 0 0 5px var(--accent-blue); }
+
     .visual-box { background: var(--bg-secondary); border: 1px dashed var(--border); border-radius: 8px; padding: 2rem; margin: 1rem 0; text-align: center; color: var(--text-secondary); font-size: 0.82rem; }
-    .visual-box .diagram { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-primary); margin-top: 0.75rem; line-height: 1.6; }
     .sep { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
     .footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.78rem; }
     .footer a { color: var(--accent-green); text-decoration: none; }
@@ -115,6 +397,11 @@
       .header h1 { font-size: 1.5rem; }
       .download-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
       .chooser-buttons { grid-template-columns: 1fr; }
+      .diag-vm-box { width: 100px; }
+      .diag-physical-box { min-width: 110px; }
+      .diag-machines-row { gap: 0.5rem; }
+      .diag-bridge-connector { padding: 0 0.25rem; }
+      .diag-bridge-dash { width: 20px; }
     }
   </style>
 </head>
@@ -159,7 +446,7 @@
           </div>
           <div class="download-card">
             <div><div class="name">Kali Linux (VM Image)</div><div class="desc">Your attacker machine: pre-built VM, not the ISO</div></div>
-            <a href="https://www.kali.org/get-kali/#kali-virtual-machines" target="_blank">Download: </a>
+            <a href="https://www.kali.org/get-kali/#kali-virtual-machines" target="_blank">Download →</a>
           </div>
           <div class="download-card">
             <div><div class="name">Metasploitable 2</div><div class="desc">The target: intentionally vulnerable Linux VM</div></div>
@@ -219,11 +506,50 @@
             <span class="callout-icon">⚠</span>
             <div><strong>Never connect Metasploitable to the internet.</strong> It's so vulnerable that it would be compromised within minutes on an open network. Host-only keeps it isolated.</div>
           </div>
-          <div class="visual-box">
-            How your network should look
-            <img src="single-pc.png" alt="">
+
+          <!-- ===== SINGLE PC NETWORK DIAGRAM ===== -->
+          <div class="network-diagram">
+            <div class="diagram-title">Your network topology — single machine (host-only)</div>
+            <div class="diag-single">
+              <div class="diag-host-box">
+                <span class="diag-host-label">Your Physical Computer</span>
+                <div class="diag-vms-row">
+                  <div class="diag-vm">
+                    <div class="diag-vm-box kali">
+                      <span class="diag-vm-icon">🐉</span>
+                      <span class="diag-vm-name kali">Kali Linux</span>
+                      <span class="diag-vm-ip">192.168.56.102</span>
+                    </div>
+                  </div>
+                  <div class="diag-connector">
+                    <div class="diag-connector-line">
+                      <div class="diag-dot"></div>
+                      <div class="diag-dash-line"></div>
+                      <div class="diag-dot"></div>
+                    </div>
+                    <div class="diag-connector-label">vboxnet0</div>
+                  </div>
+                  <div class="diag-vm">
+                    <div class="diag-vm-box msf">
+                      <span class="diag-vm-icon">🎯</span>
+                      <span class="diag-vm-name msf">Metasploitable</span>
+                      <span class="diag-vm-ip">192.168.56.101</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="diag-network-badge">
+                  <span class="diag-badge isolated">🔒 Host-Only — Isolated from internet</span>
+                </div>
+              </div>
+            </div>
+            <div class="diag-legend" style="margin-top:1.25rem;">
+              <div class="diag-legend-item"><div class="diag-legend-dot attacker"></div>Attacker VM</div>
+              <div class="diag-legend-item"><div class="diag-legend-dot target"></div>Target VM</div>
+              <div class="diag-legend-item" style="color:var(--accent-green); font-size:0.58rem; font-family:'JetBrains Mono',monospace;">Both VMs share the same virtual switch</div>
             </div>
           </div>
+          <!-- ===== END SINGLE PC DIAGRAM ===== -->
+
         </div>
       </div>
 
@@ -239,10 +565,63 @@
             <span class="callout-icon">⚠</span>
             <div><strong>Security warning:</strong> Bridged mode puts Metasploitable on your real network. This is fine on your private home WiFi. <strong>Never do this on a public, shared, or university network.</strong> Metasploitable is so vulnerable it would be compromised within minutes — and you'd be exposing a hackable machine to everyone on that network. Only use this setup on a network you control.</div>
           </div>
-          <div class="visual-box">
-            How bridged networking looks across two machines
-            <img src="two-pc.png" alt="">
+
+          <!-- ===== TWO PC NETWORK DIAGRAM ===== -->
+          <div class="network-diagram">
+            <div class="diagram-title">Your network topology — two machines (bridged adapter)</div>
+            <div class="diag-dual">
+              <div class="diag-machines-row">
+                <!-- Machine A: Mac + Kali -->
+                <div class="diag-machine">
+                  <div class="diag-physical-box">
+                    <span class="diag-physical-label">Machine A — Mac</span>
+                    <span class="diag-physical-icon">💻</span>
+                    <span class="diag-physical-name">Host OS</span>
+                    <div class="diag-vm-box kali" style="width:auto; padding: 0.6rem 0.75rem;">
+                      <span class="diag-vm-icon" style="font-size:1.1rem;">🐉</span>
+                      <span class="diag-vm-name kali">Kali Linux VM</span>
+                      <span class="diag-vm-ip">192.168.1.10</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bridge connector: Router in the middle -->
+                <div class="diag-bridge-connector">
+                  <div class="diag-bridge-line">
+                    <div class="diag-bridge-dash"></div>
+                    <div class="diag-router-icon">📡</div>
+                    <div class="diag-bridge-dash"></div>
+                  </div>
+                  <div class="diag-bridge-label">Home Router<br>Bridged Network</div>
+                </div>
+
+                <!-- Machine B: Windows + Metasploitable -->
+                <div class="diag-machine">
+                  <div class="diag-physical-box">
+                    <span class="diag-physical-label">Machine B — Windows</span>
+                    <span class="diag-physical-icon">🖥️</span>
+                    <span class="diag-physical-name">Host OS</span>
+                    <div class="diag-vm-box msf" style="width:auto; padding: 0.6rem 0.75rem;">
+                      <span class="diag-vm-icon" style="font-size:1.1rem;">🎯</span>
+                      <span class="diag-vm-name msf">Metasploitable VM</span>
+                      <span class="diag-vm-ip">192.168.1.20</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="diag-network-badge">
+                <span class="diag-badge bridged">🌐 Bridged — Both VMs on same LAN subnet</span>
+              </div>
+            </div>
+            <div class="diag-legend" style="margin-top:1.25rem;">
+              <div class="diag-legend-item"><div class="diag-legend-dot attacker"></div>Attacker VM</div>
+              <div class="diag-legend-item"><div class="diag-legend-dot target"></div>Target VM</div>
+              <div class="diag-legend-item"><div class="diag-legend-dot network"></div>Physical LAN via router</div>
+            </div>
           </div>
+          <!-- ===== END TWO PC DIAGRAM ===== -->
+
           <div class="step">
             <div class="step-header"><div class="step-num">3</div><div class="step-title">Make sure both physical machines are on the same network</div></div>
             <p>Both your Mac and Windows PC should be connected to the same WiFi network or plugged into the same router via Ethernet. Verify by checking their IPs — they should be in the same range (e.g. both <code>192.168.1.x</code> or both <code>192.168.0.x</code>).</p>
