@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brewing Security | Metasploitable 2 Lab Setup Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e14;
+      --bg-secondary: #111922;
+      --bg-card: #151d28;
+      --bg-code: #0d1117;
+      --border: #1e2a3a;
+      --border-accent: #2d4a2e;
+      --text-primary: #c5cdd8;
+      --text-secondary: #6b7d95;
+      --text-heading: #e2e8f0;
+      --accent-green: #4ade80;
+      --accent-green-dim: #22543d;
+      --accent-amber: #f59e0b;
+      --accent-amber-dim: #78350f;
+      --accent-red: #f87171;
+      --accent-red-dim: #7f1d1d;
+      --accent-blue: #60a5fa;
+      --accent-blue-dim: #1e3a5f;
+      --code-string: #a5d6a7;
+      --code-flag: #90caf9;
+      --code-comment: #546e7a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; padding: 0; }
+    .page-container { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+    .header { margin-bottom: 3.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+    .header-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-green); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .header-label::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
+    .header h1 { font-size: 1.9rem; font-weight: 700; color: var(--text-heading); line-height: 1.25; margin-bottom: 0.75rem; }
+    .header p { color: var(--text-secondary); font-size: 0.95rem; max-width: 600px; }
+
+    /* Chooser */
+    .chooser-section { margin-bottom: 3rem; }
+    .chooser-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 1rem; }
+    .chooser-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .chooser-btn { background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; cursor: pointer; transition: all 0.25s ease; text-align: left; }
+    .chooser-btn:hover { border-color: var(--accent-green-dim); background: var(--bg-secondary); }
+    .chooser-btn.active { border-color: var(--accent-green); background: rgba(74, 222, 128, 0.04); box-shadow: 0 0 20px rgba(74, 222, 128, 0.06); }
+    .chooser-btn .btn-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+    .chooser-btn .btn-title { font-weight: 600; color: var(--text-heading); font-size: 0.95rem; margin-bottom: 0.25rem; display: block; }
+    .chooser-btn .btn-desc { color: var(--text-secondary); font-size: 0.78rem; display: block; line-height: 1.5; }
+    .chooser-btn.active .btn-title { color: var(--accent-green); }
+
+    /* Visibility */
+    .guide-content { display: none; }
+    .guide-content.visible { display: block; }
+    .single-only, .dual-only { display: none; }
+    .single-only.show, .dual-only.show { display: block; }
+
+    /* Sections */
+    .section { margin-bottom: 3rem; }
+    .section-number { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .section h2 { font-size: 1.3rem; font-weight: 600; color: var(--text-heading); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+    .section h3 { font-size: 1.05rem; font-weight: 600; color: var(--text-heading); margin-top: 2rem; margin-bottom: 0.75rem; }
+    p { margin-bottom: 1rem; font-size: 0.92rem; }
+
+    /* Download cards */
+    .download-grid { display: grid; gap: 0.75rem; margin: 1.25rem 0; }
+    .download-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+    .download-card:hover { border-color: var(--accent-green-dim); }
+    .download-card .name { font-weight: 600; color: var(--text-heading); font-size: 0.9rem; }
+    .download-card .desc { color: var(--text-secondary); font-size: 0.78rem; margin-top: 0.15rem; }
+    .download-card a { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--accent-green); text-decoration: none; padding: 0.35rem 0.85rem; border: 1px solid var(--accent-green-dim); border-radius: 5px; transition: all 0.2s; white-space: nowrap; }
+    .download-card a:hover { background: var(--accent-green-dim); }
+
+    /* Steps */
+    .step { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin: 1.25rem 0; position: relative; }
+    .step-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+    .step-num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--bg-primary); background: var(--accent-green); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-title { font-weight: 600; font-size: 0.95rem; color: var(--text-heading); }
+    .step p { color: var(--text-primary); font-size: 0.88rem; }
+
+    /* Code blocks */
+    .code-block { background: var(--bg-code); border: 1px solid var(--border); border-radius: 7px; padding: 1rem 1.25rem; margin: 0.75rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.8; overflow-x: auto; position: relative; }
+    .code-block .comment { color: var(--code-comment); }
+    .code-block .flag { color: var(--code-flag); }
+    .code-block .string { color: var(--code-string); }
+    .code-block .prompt { color: var(--accent-green); user-select: none; }
+
+    /* Callouts */
+    .callout { border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.85rem; display: flex; gap: 0.75rem; align-items: flex-start; }
+    .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .callout-warning { background: rgba(245, 158, 11, 0.06); border: 1px solid var(--accent-amber-dim); color: var(--accent-amber); }
+    .callout-danger { background: rgba(248, 113, 113, 0.06); border: 1px solid var(--accent-red-dim); color: var(--accent-red); }
+    .callout-info { background: rgba(96, 165, 250, 0.06); border: 1px solid var(--accent-blue-dim); color: var(--accent-blue); }
+    .callout-success { background: rgba(74, 222, 128, 0.06); border: 1px solid var(--accent-green-dim); color: var(--accent-green); }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.82em; background: var(--bg-code); padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid var(--border); color: var(--accent-green); }
+    .visual-box { background: var(--bg-secondary); border: 1px dashed var(--border); border-radius: 8px; padding: 2rem; margin: 1rem 0; text-align: center; color: var(--text-secondary); font-size: 0.82rem; }
+    .visual-box .diagram { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-primary); margin-top: 0.75rem; line-height: 1.6; }
+    .sep { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.78rem; }
+    .footer a { color: var(--accent-green); text-decoration: none; }
+    .trouble-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 0.75rem 0; }
+    .trouble-item .problem { font-weight: 600; color: var(--accent-red); font-size: 0.85rem; margin-bottom: 0.4rem; }
+    .trouble-item .fix { color: var(--text-primary); font-size: 0.85rem; }
+    .checklist { list-style: none; margin: 1rem 0; }
+    .checklist li { padding: 0.5rem 0; padding-left: 1.75rem; position: relative; font-size: 0.88rem; border-bottom: 1px solid rgba(30, 42, 58, 0.5); }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before { content: '○'; position: absolute; left: 0; color: var(--text-secondary); font-size: 0.85rem; }
+    .mode-badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+    .mode-badge.single { background: var(--accent-green-dim); color: var(--accent-green); }
+    .mode-badge.dual { background: var(--accent-blue-dim); color: var(--accent-blue); }
+    .fade-in { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 600px) {
+      .page-container { padding: 2rem 1rem 4rem; }
+      .header h1 { font-size: 1.5rem; }
+      .download-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      .chooser-buttons { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+
+    <div class="header">
+      <div class="header-label">Brewing Security Lab Guide</div>
+      <h1>Metasploitable 2: Lab Setup</h1>
+      <p>Everything you need to set up your hacking lab before watching the videos. Follow these steps once, then you're ready for the entire series.</p>
+    </div>
+
+    <!-- ===== CHOOSER ===== -->
+    <div class="chooser-section">
+      <div class="chooser-label">What's your setup?</div>
+      <div class="chooser-buttons">
+        <div class="chooser-btn" id="btn-single" onclick="setMode('single')">
+          <span class="btn-icon">💻</span>
+          <span class="btn-title">One Computer</span>
+          <span class="btn-desc">Both Kali and Metasploitable run as VMs on the same machine</span>
+        </div>
+        <div class="chooser-btn" id="btn-dual" onclick="setMode('dual')">
+          <span class="btn-icon">💻 ↔ 💻</span>
+          <span class="btn-title">Two Computers</span>
+          <span class="btn-desc">Kali on one machine (e.g. Mac), Metasploitable on another (e.g. Windows PC)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GUIDE CONTENT (hidden until choice) ===== -->
+    <div class="guide-content" id="guide-content">
+
+      <!-- SECTION 1: Downloads — COMMON -->
+      <div class="section fade-in">
+        <div class="section-number">01: Downloads</div>
+        <h2>What You Need</h2>
+        <p>Three things. Download all three before starting.</p>
+        <div class="download-grid">
+          <div class="download-card">
+            <div><div class="name">VirtualBox</div><div class="desc">Free VM hypervisor: runs both machines</div></div>
+            <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">Download →</a>
+          </div>
+          <div class="download-card">
+            <div><div class="name">Kali Linux (VM Image)</div><div class="desc">Your attacker machine: pre-built VM, not the ISO</div></div>
+            <a href="https://www.kali.org/get-kali/#kali-virtual-machines" target="_blank">Download: </a>
+          </div>
+          <div class="download-card">
+            <div><div class="name">Metasploitable 2</div><div class="desc">The target: intentionally vulnerable Linux VM</div></div>
+            <a href="https://sourceforge.net/projects/metasploitable/" target="_blank">Download →</a>
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <span class="callout-icon">ℹ</span>
+          <div><strong>System requirements:</strong> At least 8 GB RAM on your host machine. Kali needs 2 GB, Metasploitable needs 512 MB, and your OS needs the rest.</div>
+        </div>
+        <div class="dual-only">
+          <div class="callout callout-info">
+            <span class="callout-icon">ℹ</span>
+            <div><strong>Two-machine setup:</strong> Install VirtualBox on <strong>both</strong> machines. Kali VM goes on Machine A (e.g. your Mac). Metasploitable VM goes on Machine B (e.g. your Windows PC).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Import — COMMON -->
+      <div class="section fade-in">
+        <div class="section-number">02: Setup</div>
+        <h2>Import the VMs</h2>
+        <div class="step">
+          <div class="step-header"><div class="step-num">1</div><div class="step-title">Import Kali Linux</div></div>
+          <p>Open VirtualBox → File → Import Appliance → select the Kali <code>.ova</code> file you downloaded. Keep default settings. Click Import.</p>
+        </div>
+        <div class="step">
+          <div class="step-header"><div class="step-num">2</div><div class="step-title">Import Metasploitable 2</div></div>
+          <p>Metasploitable 2 comes as a <code>.vmdk</code> file (not <code>.ova</code>). In VirtualBox: click New → name it "Metasploitable 2" → Type: Linux → Version: Ubuntu (64-bit) → RAM: 512 MB → Use an existing virtual hard disk file → select the <code>.vmdk</code> file. Click Create.</p>
+        </div>
+      </div>
+
+      <!-- ===== SECTION 3: Network — SINGLE MACHINE ===== -->
+      <div class="single-only">
+        <div class="section fade-in">
+          <div class="section-number">03 — Network (Most Important Step)</div>
+          <h2>Network Configuration</h2>
+          <div class="mode-badge single">Single Machine</div>
+          <p>This is where 90% of beginners break their lab. Both VMs must be on the same isolated network. If you skip this, nothing works.</p>
+          <div class="step">
+            <div class="step-header"><div class="step-num">3</div><div class="step-title">Create a Host-Only Network</div></div>
+            <p>VirtualBox → File → Host Network Manager → click Create. You'll see something like <code>vboxnet0</code> with IP <code>192.168.56.1/24</code>. Leave defaults. Close.</p>
+          </div>
+          <div class="step">
+            <div class="step-header"><div class="step-num">4</div><div class="step-title">Set Kali to Host-Only</div></div>
+            <p>Click Kali VM → Settings → Network → Adapter 1 → change "Attached to" from <strong>NAT</strong> to <strong>Host-only Adapter</strong> → select <code>vboxnet0</code>. Click OK.</p>
+            <div class="callout callout-info">
+              <span class="callout-icon">💡</span>
+              <div><strong>Want internet on Kali too?</strong> Enable Adapter 2, set it to NAT. Adapter 1 = Host-only (talks to Metasploitable), Adapter 2 = NAT (talks to internet). Optional but useful for updates.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-header"><div class="step-num">5</div><div class="step-title">Set Metasploitable to Host-Only</div></div>
+            <p>Same thing. Click Metasploitable VM → Settings → Network → Adapter 1 → <strong>Host-only Adapter</strong> → <code>vboxnet0</code>. Click OK.</p>
+          </div>
+          <div class="callout callout-danger">
+            <span class="callout-icon">⚠</span>
+            <div><strong>Never connect Metasploitable to the internet.</strong> It's so vulnerable that it would be compromised within minutes on an open network. Host-only keeps it isolated.</div>
+          </div>
+          <div class="visual-box">
+            How your network should look
+            <img src="assets/single-pc.png" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SECTION 3: Network — TWO MACHINES ===== -->
+      <div class="dual-only">
+        <div class="section fade-in">
+          <div class="section-number">03: Network (Most Important Step)</div>
+          <h2>Network Configuration</h2>
+          <div class="mode-badge dual">Two Machines</div>
+          <p>With VMs on two different computers, Host-only adapter won't work. Host-only creates a virtual network that exists <strong>only inside one computer</strong>. It's invisible to the outside world. So if Kali is on your Mac and Metasploitable is on your Windows PC, they can't see each other through host-only.</p>
+          <p>The fix: use <strong>Bridged Adapter</strong> instead. This connects each VM directly to your real physical network (your WiFi or Ethernet). Both VMs get IPs from your router, just like your phone or any other device on your network. Since they're on the same real network, they can talk to each other.</p>
+          <div class="callout callout-danger">
+            <span class="callout-icon">⚠</span>
+            <div><strong>Security warning:</strong> Bridged mode puts Metasploitable on your real network. This is fine on your private home WiFi. <strong>Never do this on a public, shared, or university network.</strong> Metasploitable is so vulnerable it would be compromised within minutes — and you'd be exposing a hackable machine to everyone on that network. Only use this setup on a network you control.</div>
+          </div>
+          <div class="visual-box">
+            How bridged networking looks across two machines
+            <img src="assets/two-pc.png" alt="">
+          </div>
+          <div class="step">
+            <div class="step-header"><div class="step-num">3</div><div class="step-title">Make sure both physical machines are on the same network</div></div>
+            <p>Both your Mac and Windows PC should be connected to the same WiFi network or plugged into the same router via Ethernet. Verify by checking their IPs — they should be in the same range (e.g. both <code>192.168.1.x</code> or both <code>192.168.0.x</code>).</p>
+            <div class="code-block">
+              <span class="comment"># On Mac: find your IP</span><br>
+              <span class="prompt">$ </span>ifconfig | grep "inet "<br>
+              <br>
+              <span class="comment"># On Windows: find your IP</span><br>
+              <span class="prompt">C:\> </span>ipconfig
+            </div>
+            <p>If both show IPs like <code>192.168.1.x</code> they're on the same subnet. Good.</p>
+          </div>
+          <div class="step">
+            <div class="step-header"><div class="step-num">4</div><div class="step-title">Set Kali VM to Bridged Adapter (on your Mac)</div></div>
+            <p>In VirtualBox on your Mac: click Kali VM → Settings → Network → Adapter 1 → change "Attached to" from NAT to <strong>Bridged Adapter</strong>.</p>
+            <p>Under "Name", select your active network interface. This will be something like:</p>
+            <div class="code-block">
+              <span class="comment"># On Mac, you'll typically see:</span><br>
+              en0: Wi-Fi (Wireless) &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← pick this if on WiFi</span><br>
+              en0: Ethernet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← pick this if on cable</span>
+            </div>
+            <p>Click OK.</p>
+          </div>
+          <div class="step">
+            <div class="step-header"><div class="step-num">5</div><div class="step-title">Set Metasploitable VM to Bridged Adapter (on your Windows PC)</div></div>
+            <p>In VirtualBox on your Windows PC: click Metasploitable VM → Settings → Network → Adapter 1 → change to <strong>Bridged Adapter</strong>.</p>
+            <p>Under "Name", select your active network interface:</p>
+            <div class="code-block">
+              <span class="comment"># On Windows, you'll typically see:</span><br>
+              Intel(R) Wi-Fi 6 AX201 &nbsp;&nbsp;<span class="comment">← if on WiFi</span><br>
+              Realtek PCIe GbE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← if on Ethernet cable</span>
+            </div>
+            <p>Pick whichever one your PC is actually using to connect to the network. Click OK.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: Boot & Verify — COMMON (with minor toggles) -->
+      <div class="section fade-in">
+        <div class="section-number">04: Verify</div>
+        <h2>Boot and Test the Connection</h2>
+        <div class="step">
+          <div class="step-header"><div class="step-num">6</div><div class="step-title">Boot both VMs</div></div>
+          <p>Start Kali first, then Metasploitable. Metasploitable shows its IP on the login screen.</p>
+          <p>Log into Metasploitable:</p>
+          <div class="code-block">
+            <span class="comment"># Metasploitable login</span><br>
+            Username: <span class="string">msfadmin</span><br>
+            Password: <span class="string">msfadmin</span>
+          </div>
+          <p>Then check the IP:</p>
+          <div class="code-block"><span class="prompt">msfadmin@metasploitable:~$ </span>ifconfig</div>
+          <p>Look for <code>inet addr:</code> under <code>eth0</code>. That's your Metasploitable IP. Write it down.</p>
+          <div class="dual-only">
+            <p>Both IPs should be in the same range as your router (e.g. both <code>192.168.1.x</code>). If one VM gets a <code>10.0.2.x</code> address, it's still on NAT, go back and change it to Bridged.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-header"><div class="step-num">7</div><div class="step-title">Find your Kali IP</div></div>
+          <p>On Kali, open a terminal and run:</p>
+          <div class="code-block">
+            <span class="prompt">┌──(kali㉿kali)-[~]</span><br>
+            <span class="prompt">└─$ </span>ip addr
+          </div>
+          <div class="single-only"><p>Look for your IP under the <code>eth0</code> or <code>eth1</code> interface. Should be in the <code>192.168.56.x</code> range.</p></div>
+          <div class="dual-only"><p>Look for your IP under the <code>eth0</code> or <code>eth1</code> interface. Should be in the same range as your router (e.g. <code>192.168.1.x</code>).</p></div>
+        </div>
+        <div class="step">
+          <div class="step-header"><div class="step-num">8</div><div class="step-title">Ping the target</div></div>
+          <p>From Kali, ping Metasploitable:</p>
+          <div class="single-only">
+            <div class="code-block"><span class="prompt">└─$ </span>ping <span class="string">192.168.56.101</span> <span class="comment"># use YOUR Metasploitable IP</span></div>
+          </div>
+          <div class="dual-only">
+            <div class="code-block"><span class="prompt">└─$ </span>ping <span class="string">192.168.1.20</span> <span class="comment"># use YOUR Metasploitable IP</span></div>
+          </div>
+          <p>If you see replies — you're done. The lab works. Press <code>Ctrl+C</code> to stop.</p>
+          <div class="callout callout-success">
+            <span class="callout-icon">✓</span>
+            <div><strong>If ping works</strong> — your lab is ready. Go watch the first video.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: Troubleshooting — SINGLE -->
+      <div class="single-only">
+        <div class="section fade-in">
+          <div class="section-number">05: Troubleshooting</div>
+          <h2>If Something Doesn't Work</h2>
+          <div class="trouble-item"><div class="problem">"Destination Host Unreachable" when pinging</div><div class="fix">Both VMs aren't on the same network. Go back to Step 4 and Step 5. Make sure BOTH are set to <strong>Host-only Adapter</strong> on the same <code>vboxnet0</code> network. This is the #1 problem beginners hit.</div></div>
+          <div class="trouble-item"><div class="problem">Metasploitable IP changed after reboot</div><div class="fix">DHCP assigns IPs dynamically. After every reboot, run <code>ifconfig</code> on Metasploitable to get the current IP. This is normal and expected.</div></div>
+          <div class="trouble-item"><div class="problem">Metasploitable won't boot / kernel panic</div><div class="fix">In VirtualBox, go to Metasploitable Settings → System → uncheck "Enable EFI." Metasploitable is old and doesn't support EFI boot. Also try: Settings → System → Processor → make sure it's set to 1 CPU.</div></div>
+          <div class="trouble-item"><div class="problem">Kali has no IP address on eth0</div><div class="fix">Run <code>sudo dhclient eth0</code> to request an IP. If that doesn't work, check that the Host-Only network was created in File → Host Network Manager and that the DHCP Server is enabled there.</div></div>
+          <div class="trouble-item"><div class="problem">VirtualBox says "vboxnet0 not found"</div><div class="fix">Go to File → Host Network Manager and create a new host-only network. It might be named differently (vboxnet1, etc.) just use whatever name appears.</div></div>
+          <div class="trouble-item"><div class="problem">Ping works but nmap doesn't find the target</div><div class="fix">Make sure you're scanning the right subnet. If your IPs are <code>192.168.56.x</code>, scan <code>192.168.56.0/24</code>. If they're <code>192.168.1.x</code>, scan <code>192.168.1.0/24</code>.</div></div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: Troubleshooting — DUAL -->
+      <div class="dual-only">
+        <div class="section fade-in">
+          <div class="section-number">05: Troubleshooting</div>
+          <h2>If Something Doesn't Work</h2>
+          <div class="trouble-item"><div class="problem">Kali can't ping Metasploitable across machines</div><div class="fix">First, check that both physical machines can ping each other (Mac pinging Windows and vice versa). If they can't, it's a network issue between your computers, not a VM issue. Check your WiFi, check if both are on the same network, and make sure no firewall on the Windows PC is blocking ping (Windows Firewall blocks ICMP by default you may need to allow it).</div></div>
+          <div class="trouble-item"><div class="problem">Windows Firewall blocking connections</div><div class="fix">Windows Firewall can block traffic to/from the Metasploitable VM. For your private lab, you can temporarily disable it: Windows Security → Firewall & network protection → Private network → turn off. <strong>Only do this on your private home network.</strong> Re-enable it when you're done.</div></div>
+          <div class="trouble-item"><div class="problem">VM gets a 10.0.2.x IP instead of 192.168.x.x</div><div class="fix">The VM is still on NAT, not Bridged. Shut down the VM, go to Settings → Network → Adapter 1, and change it to <strong>Bridged Adapter</strong>. Make sure you selected the correct physical interface (WiFi or Ethernet).</div></div>
+          <div class="trouble-item"><div class="problem">Metasploitable doesn't get an IP at all</div><div class="fix">Some routers limit DHCP leases. On Metasploitable, try manually requesting one: <code>sudo dhclient eth0</code>. If it still doesn't work, your router might be filtering MAC addresses, check your router's admin page.</div></div>
+          <div class="trouble-item"><div class="problem">Bridged adapter shows no options / grayed out</div><div class="fix">On Mac: VirtualBox might need permission to access network interfaces. Go to System Settings → Privacy & Security → check if VirtualBox has network access. On Windows: try running VirtualBox as Administrator.</div></div>
+          <div class="trouble-item"><div class="problem">Metasploitable is reachable from other devices on the network</div><div class="fix">This is expected with Bridged mode that's how it works. Metasploitable is on your real network now. This is why you <strong>only</strong> do this on a private home network you control. When you're done with the lab, shut down Metasploitable. Don't leave it running.</div></div>
+          <div class="callout callout-warning">
+            <span class="callout-icon">💡</span>
+            <div><strong>Pro tip for two-machine setups:</strong> If you later get a machine with enough RAM (16 GB+), move everything to a single computer with Host-only networking. It's more secure and more convenient no dependency on WiFi, no bridged mode risks, no worrying about which physical machine has which VM. But for now, the two-machine bridged setup works perfectly for learning.</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="sep">
+
+      <!-- Quick Reference — COMMON -->
+      <div class="section fade-in">
+        <div class="section-number">Quick Reference</div>
+        <h2>Commands You'll Use Constantly</h2>
+        <div class="code-block">
+          <span class="comment"># Check Metasploitable's IP (run on Metasploitable)</span><br>
+          <span class="prompt">$ </span>ifconfig<br><br>
+          <span class="comment"># Check Kali's IP (run on Kali)</span><br>
+          <span class="prompt">$ </span>ip addr<br><br>
+          <span class="comment"># Ping the target (run on Kali)</span><br>
+          <span class="prompt">$ </span>ping <span class="string">TARGET_IP</span><br><br>
+          <span class="comment"># Full scan (run on Kali) — this is how every video starts</span><br>
+          <span class="prompt">$ </span>nmap <span class="flag">-sV -sC -p-</span> <span class="string">TARGET_IP</span> <span class="flag">-oN</span> scan.txt<br><br>
+          <span class="comment"># Start Metasploit (run on Kali)</span><br>
+          <span class="prompt">$ </span>sudo msfconsole
+        </div>
+      </div>
+
+      <!-- Final Checklist — SINGLE -->
+      <div class="single-only">
+        <div class="section fade-in">
+          <div class="section-number">Final Check</div>
+          <h2>Before You Watch the First Video</h2>
+          <ul class="checklist">
+            <li>VirtualBox installed</li>
+            <li>Kali Linux VM imported and boots correctly</li>
+            <li>Metasploitable 2 VM imported and boots correctly</li>
+            <li>Both VMs set to Host-only Adapter</li>
+            <li>You can ping Metasploitable from Kali</li>
+            <li>You've noted both IPs somewhere</li>
+          </ul>
+          <div class="callout callout-success"><span class="callout-icon">→</span><div>All checked? You're ready. Go watch the first video, we start scanning.</div></div>
+        </div>
+      </div>
+
+      <!-- Final Checklist — DUAL -->
+      <div class="dual-only">
+        <div class="section fade-in">
+          <div class="section-number">Final Check</div>
+          <h2>Before You Watch the First Video</h2>
+          <ul class="checklist">
+            <li>VirtualBox installed on both machines</li>
+            <li>Kali VM on Machine A, Metasploitable VM on Machine B</li>
+            <li>Both physical machines on the same WiFi / LAN</li>
+            <li>Both VMs set to Bridged Adapter (not NAT, not Host-only)</li>
+            <li>Both VMs get IPs in the same range (e.g. both 192.168.1.x)</li>
+            <li>Kali can ping Metasploitable across machines</li>
+            <li>You've noted both IPs somewhere</li>
+            <li>You're on a private network you control</li>
+          </ul>
+          <div class="callout callout-success"><span class="callout-icon">→</span><div>All checked? You're ready. The rest of the series works identically regardless of whether you're on one machine or two.</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Brewing Security. Learn hacking the way it actually works.<br>
+      <a href="https://youtube.com/@BrewingSecurity">youtube.com/@BrewingSecurity</a>
+    </div>
+  </div>
+
+  <script>
+    function setMode(mode) {
+      document.getElementById('btn-single').classList.toggle('active', mode === 'single');
+      document.getElementById('btn-dual').classList.toggle('active', mode === 'dual');
+      document.getElementById('guide-content').classList.add('visible');
+      document.querySelectorAll('.single-only').forEach(el => el.classList.toggle('show', mode === 'single'));
+      document.querySelectorAll('.dual-only').forEach(el => el.classList.toggle('show', mode === 'dual'));
+      setTimeout(() => {
+        document.getElementById('guide-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  </script>
+</body>
+</html>
